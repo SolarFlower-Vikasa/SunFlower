@@ -1,15 +1,6 @@
 # SunFlower
 # Solar Tracker Code for Vikasa
 
-Solar Tracking Code for Vikasa
-
-Written and Developed by Zachary Switzer copyright February 14th 2018. 
-Duplication or modification of this code can only be used for educational or 
-non-profit projects, or for any projects with the original developer's 
-(Zach Switzer) consent.
-
-Program Background: 
-
 Vikasa translates to the opening or closing of a flower in Sanskrit, and is a
 project developed at the George Washington University by Zach Switzer,
 Ali Ahmed, Feng (Jason) Xiang, Aaron Patron, and Jacari Matthews. It is a
@@ -46,5 +37,3 @@ pi's bootup sequence.
 
 This code was created for execution in Python3 and will not work in other
 versions of Python (Pysolar only works when executed in Python3).
-
-

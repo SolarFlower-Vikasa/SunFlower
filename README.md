@@ -1,7 +1,6 @@
 # SunFlower
 # Solar Tracker Code for Vikasa
 
-'''
 Solar Tracking Code for Vikasa
 
 Written and Developed by Zachary Switzer copyright February 14th 2018. 
@@ -47,5 +46,5 @@ pi's bootup sequence.
 
 This code was created for execution in Python3 and will not work in other
 versions of Python (Pysolar only works when executed in Python3).
-'''
+
 

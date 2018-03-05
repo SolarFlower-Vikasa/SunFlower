@@ -23,10 +23,10 @@ http://pysolar.org/ and https://github.com/pingswept/pysolar
 ServoBlaster can be found at:
 https://github.com/richardghirst/PiBits/tree/master/ServoBlaster
 
-This code was developed in Python 3 for a dual axis solar tracking system with 
-360 degree rotation in the x axis and 180 degree rotation in the y axis. It is 
-meant to be used with 2 servo motors (each rotate 180 degrees) and employs the 
-Pysolar and ServoBlaster open source programs in order to track the sun's 
+This code was developed in Python 3 for a dual axis solar tracking system with
+360 degree rotation in the x axis and 180 degree rotation in the y axis. It is
+meant to be used with 2 servo motors (each rotate 180 degrees) and employs the
+Pysolar and ServoBlaster open source programs in order to track the sun's
 movement and mirror it with motors.
 
 This code was developed with the intent of being used on a raspberry pi and

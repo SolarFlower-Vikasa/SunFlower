@@ -1,5 +1,5 @@
 # SunFlower
-# Solar Tracker Code for Vikasa
+# Dual-Axis Solar Tracking Code for Vikasa
 
 Vikasa translates to the opening or closing of a flower in Sanskrit, and is a
 project developed at the George Washington University by Zach Switzer,

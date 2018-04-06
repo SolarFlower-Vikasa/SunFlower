@@ -5,8 +5,6 @@ This code was created for execution in Python3 and will not work in other
 versions of Python (Pysolar only works when executed in Python3).
 '''
 
-# Initialization of Code
-
 # importing modules
 from pysolar.solar import * # Use for Pysolar data
 from datetime import datetime # Use for getting instant time
@@ -15,19 +13,6 @@ import sys, select # Use for timed user input
 from subprocess import call # Use for turning off the Pi
 
 ServoBlaster = open('/dev/servoblaster', 'w') # opening servoblaster
-
-# code structure: code must be put into boot-up sequence of pi for automation
-#   - code saying wait 3 min for user interrupt
-#       => if there is interrupt then stop the end the code but keep the pi on
-#       => if there is no interrupt / time runs out run the rest of the code
-#   - run the DC motor to extend the array
-#   - run the solar tracker while loop for the servo motors
-#       => choose to run code over range of degrees of altitude (ie greater than 15 deg)
-#   - run code for DC motor to close array
-#   - code saying wait 10 min for user interrupt
-#       => if there is interrupt then stop the end the code but keep the pi on
-#       => if there is no interrupt / time runs out run the rest of the code
-#   - run code to turn off the pi
 
 # code for timed user interrupt to end code
 print ("You have 3 minutes to access the Pi!")
@@ -44,6 +29,25 @@ latitude=38.895     # DC decimal north
 longitude=-77.036   # DC decimal west
 elevation=18        # DC Foggy Bottom meters
 
+# Waiting 5 minutes for the sun to come up
+# Terminates code if sun doesn't come up in time
+count=0
+for i in range(0,20): 
+  d=datetime.now() # want to call this to update sun position
+  alt=get_altitude(latitude, longitude, d) # current altitude
+  azi=get_azimuth(latitude, longitude, d, elevation) # current azimuth
+  count=count+1
+  print(d)
+  print(alt)
+  print(azi)
+  print('Number of Iterations: ' + str(count))
+  time.sleep(15)
+  if alt>10: # For loop terminates if sun is up
+    break
+  if count==20:
+    print('The sun never came up. Shutting down.')
+    call("sudo shutdown -h now", shell=True) # Raspberry Pi shutdown command
+  
 # DC motor code to open array
 ServoBlaster.write('P1-15=2500us' + '\n') # Tell the motor to run
 ServoBlaster.flush()
@@ -57,34 +61,18 @@ servo_x=0
 alt=0 # initializing altitude and azimuth
 azi=0
 count=0 # used to count number of tracking iterations
-yaxis=[] # array for altitude values
 
 while (alt>10): # setting the contraints in y axis degrees of motion
   d=datetime.now() # want to call this to update sun position
   alt=get_altitude(latitude, longitude, d) # current altitude
   azi=get_azimuth(latitude, longitude, d, elevation) # current azimuth
-  yaxis.ammend(alt) # puts altitude values into an array
-  time.sleep(30)
-  d=datetime.now() # Adding a second value to the array to see if increasing or decreasing
-  alt=get_altitude(latitude, longitude, d)
-  azi=get_azimuth(latitude, longitude, d, elevation)
-  yaxis.ammend(alt)
-  w=all(earlier <= later for earlier, later in zip(yaxis, yaxis[1:])) # Tells if array values are increasing or decreasing
-  if w==True: # Here make one end of the servo the starting point
-      # angle is from 500us to 1500us
-      servo_y=((alt/90)*1000)+500
-  else:
-      # angle is from 1501us to 2500us so code doesn't get stuck on 1500us
-      servo_y=((alt/90)*1000)+1501
-  if azi>0: # Code will work if servo head center made starting point
-      servo_x=((azi/180)*1000)+1501
-  else:
-      servo_x=((azi/180)*1000)+500
-  ServoBlaster.write('P1-11=' + str(servo_y) + 'us' + '\n')
+  servo_y=((alt/90)*1000)+500
+  servo_x=((azi/180)*1000)+1500 # Put servo in center position
+  ServoBlaster.write('P1-11=' + str(servo_y) + 'us' + '\n') # pulse to pin 11
   ServoBlaster.flush()
-  ServoBlaster.write('P1-12=' + str(servo_x) + 'us' + '\n')
+  ServoBlaster.write('P1-12=' + str(servo_x) + 'us' + '\n') # pulse to pin 12
   ServoBlaster.flush()
-  count=count+1 # Just to show how many iterations have been done
+  count=count+1 # Shows how many iterations have been done
   print(count)
   print(str(d) + '\n')
   print(str(servo_y) + '\n')

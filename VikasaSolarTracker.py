@@ -1,9 +1,7 @@
-'''
-Solar Tracking Code for Vikasa
+#Solar Tracking Code for Vikasa
 
-This code was created for execution in Python3 and will not work in other
-versions of Python (Pysolar only works when executed in Python3).
-'''
+#This code was created for execution in Python3 and will not work in other
+#versions of Python (Pysolar only works when executed in Python3).
 
 # importing modules
 from pysolar.solar import * # Use for Pysolar data
@@ -57,21 +55,37 @@ ServoBlaster.flush()
 
 # Tracking Code
 servo_y=0 # initializing servo values
+servo_y2=0
 servo_x=0
+servo_x2=0
 alt=0 # initializing altitude and azimuth
 azi=0
 count=0 # used to count number of tracking iterations
+
+d=datetime.now() # want to call this to update sun position
+alt=get_altitude(latitude, longitude, d) # current altitude
+azi=get_azimuth(latitude, longitude, d, elevation) # current azimuth
 
 while (alt>10): # setting the contraints in y axis degrees of motion
   d=datetime.now() # want to call this to update sun position
   alt=get_altitude(latitude, longitude, d) # current altitude
   azi=get_azimuth(latitude, longitude, d, elevation) # current azimuth
   servo_y=((alt/90)*1000)+500
+  servo_y2=((alt/90)*1000)+650
   servo_x=((azi/180)*1000)+1500 # Put servo in center position
-  ServoBlaster.write('P1-11=' + str(servo_y) + 'us' + '\n') # pulse to pin 11
+  servo_x2=((azi/180)*1000)+1650
+  ServoBlaster.write('P1-11=' + str(servo_y2) + 'us' + '\n') # pulse to pin 11
   ServoBlaster.flush()
+  time.sleep(5)
+  ServoBlaster.write('P1-11=' + str(servo_y) + 'us' + '\n') # pulse to pin 12
+  ServoBlaster.flush()
+  time.sleep(5)
+  ServoBlaster.write('P1-12=' + str(servo_x2) + 'us' + '\n') # pulse to pin 11
+  ServoBlaster.flush()
+  time.sleep(5)
   ServoBlaster.write('P1-12=' + str(servo_x) + 'us' + '\n') # pulse to pin 12
   ServoBlaster.flush()
+  time.sleep(5)
   count=count+1 # Shows how many iterations have been done
   print(count)
   print(str(d) + '\n')
@@ -101,20 +115,18 @@ call("sudo shutdown -h now", shell=True)
 
 # End of working code
 
-'''
-General Pysolar Code
-latitude=38.895     # DC decimal north
-longitude=-77.036   # DC decimal west
-elevation=18        # DC Foggy Bottom meters
-d=datetime.datetime.now() # want to call this to update sun position
-alt=get_altitude(latitude, longitude, d) # degrees from horizon
-azi=get_azimuth(latitude, longitude, d, elevation) # degrees from south
+#General Pysolar Code
+#latitude=38.895     # DC decimal north
+#longitude=-77.036   # DC decimal west
+#elevation=18        # DC Foggy Bottom meters
+#d=datetime.datetime.now() # want to call this to update sun position
+#alt=get_altitude(latitude, longitude, d) # degrees from horizon
+#azi=get_azimuth(latitude, longitude, d, elevation) # degrees from south
 # with pos number = east of south or CCW
-rad=radiation.get_radiation_direct(d, alt) # clear sky radiation
+#rad=radiation.get_radiation_direct(d, alt) # clear sky radiation
 
-General ServoBlaster code
-ServoBlaster.write('P1-11=2500us' + '\n')	# lets you write to file
-and hit enter
-ServoBlaster.flush() # lets the info go to the file immediately without it
+#General ServoBlaster code
+#ServoBlaster.write('P1-11=2500us' + '\n')	# lets you write to file
+#and hit enter
+#ServoBlaster.flush() # lets the info go to the file immediately without it
 # needing to be closed and opened first
-'''

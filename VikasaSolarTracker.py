@@ -47,11 +47,12 @@ for i in range(0,20):
     call("sudo shutdown -h now", shell=True) # Raspberry Pi shutdown command
   
 # DC motor code to open array
-ServoBlaster.write('P1-15=2500us' + '\n') # Tell the motor to run
-ServoBlaster.flush()
+t_end=time.time() + 10
+while (time.time()<t_end):
+  ServoBlaster.write('P1-15=2500us' + '\n') # Tell the motor to run
+  ServoBlaster.flush()
+  print('Motor Running')
 time.sleep(10) # Tell the motor to run for x amount of seconds
-ServoBlaster.write('P1-15=500us' + '\n') # Tell the motor to stop
-ServoBlaster.flush()
 
 # Tracking Code
 servo_y=0 # initializing servo values
@@ -138,11 +139,12 @@ while (azi<=105 and azi>=-105):
   print(str(alt) + '\n')
 
 # DC motor code to close array
-ServoBlaster.write('P1-16=2500us' + '\n') # Tell the motor to run in the opposite direction
-ServoBlaster.flush()
+t_end=time.time() + 10
+while (time.time()<t_end):
+  ServoBlaster.write('P1-16=2500us' + '\n') # Tell the motor to run
+  ServoBlaster.flush()
+  print('Motor Running')
 time.sleep(10) # Tell the motor to run for x amount of seconds
-ServoBlaster.write('P1-16=500us' + '\n') # Tell the motor to stop
-ServoBlaster.flush()
 
 # Last chance to acces the Pi before it turns off
 print ("You have 3 minutes to access the Pi!")

@@ -67,12 +67,16 @@ d=datetime.now() # want to call this to update sun position
 alt=get_altitude(latitude, longitude, d) # current altitude
 azi=get_azimuth(latitude, longitude, d, elevation) # current azimuth
 
-while (azi<=105 and azi>=-105): 
+while (azi<=-255 and azi>=-360) or (azi<=0 and azi>=-105): # while loop only works in servo's range of motion
   d=datetime.now() # want to call this to update sun
   alt=get_altitude(latitude, longitude, d) 
   azi=get_azimuth(latitude, longitude, d, elevation) 
-  servo_x=((azi/180)*1000)+1500 
-  servo_x2=((azi/180)*1000)+1650
+  if azi<=-255 and azi>=-360: # Pysolar goes from 0 at south to -180 at north and then -360 at south again
+    servo_x=(-1000/105)*(azi+360)+1500
+    servo_x2=servo_x+100
+  else:
+    servo_x=(-1000/105)*(azi+105)+2500
+    servo_x2=servo_x+100
   servo_y=((alt/90)*845)+625
   servo_y2=1470
   ServoBlaster.write('P1-11=' + str(servo_y2) + 'us' + '\n') # pulse to pin 11

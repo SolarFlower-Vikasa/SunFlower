@@ -13,24 +13,27 @@ from subprocess import call # Use for turning off the Pi
 ServoBlaster = open('/dev/servoblaster', 'w') # opening servoblaster
 
 # code for timed user interrupt to end code
-print ("You have 3 minutes to access the Pi!")
-i, o, e = select.select( [sys.stdin], [], [], 180 ) # 180 seconds = 3 min
-if (i):
-  print ("Have fun with the Pi!")
-  sys.exit() # Stops the code and exits
-else:
-  print ("Commencing Solar Tracking!")
+# This code is not needed but is still an interesting timed user-interrupt
+#print ("You have 3 minutes to access the Pi!")
+#i, o, e = select.select( [sys.stdin], [], [], 180 ) # 180 seconds = 3 min
+#if (i):
+#  print ("Have fun with the Pi!")
+#  sys.exit() # Stops the code and exits
+#else:
+#  print ("Commencing Solar Tracking!")
 # Code continues if there is no input
+
+time.sleep(120)
 
 # Location code
 latitude=38.895     # DC decimal north
 longitude=-77.036   # DC decimal west
 elevation=18        # DC Foggy Bottom meters
 
-# Waiting 5 minutes for the sun to come up
+# Waiting 3 minutes for the sun to come up
 # Terminates code if sun doesn't come up in time
 count=0
-for i in range(0,20): 
+for i in range(0,8): 
   d=datetime.now() # want to call this to update sun position
   alt=get_altitude(latitude, longitude, d) # current altitude
   azi=get_azimuth(latitude, longitude, d, elevation) # current azimuth
@@ -47,12 +50,13 @@ for i in range(0,20):
     call("sudo shutdown -h now", shell=True) # Raspberry Pi shutdown command
   
 # DC motor code to open array
-t_end=time.time() + 10
+t_end=time.time() + 3.5
 while (time.time()<t_end):
   ServoBlaster.write('P1-15=2500us' + '\n') # Tell the motor to run
   ServoBlaster.flush()
   print('Motor Running')
-time.sleep(10) # Tell the motor to run for x amount of seconds
+ServoBlaster.write('P1-15=500us' + '\n') # Tell the motor to run
+ServoBlaster.flush()
 
 # Tracking Code
 servo_y=0 # initializing servo values
@@ -77,12 +81,14 @@ while (azi<=-255 and azi>=-360) or (azi<=0 and azi>=-105): # while loop only wor
   else:
     servo_x=(-1000/105)*(azi+105)+2500
     servo_x2=servo_x+100
-  servo_y=((alt/90)*845)+625
+  servo_y=((alt/90)*880)+590
   servo_y2=1470
   ServoBlaster.write('P1-11=' + str(servo_y2) + 'us' + '\n') # pulse to pin 11
   ServoBlaster.flush()
   time.sleep(5)
   servo_y3=servo_y+100
+  u=(servo_y2-servo_y3)/7
+  v=(servo_y2-servo_y3)/6
   w=(servo_y2-servo_y3)/5
   x=(servo_y2-servo_y3)/4
   y=(servo_y2-servo_y3)/3
@@ -90,26 +96,38 @@ while (azi<=-255 and azi>=-360) or (azi<=0 and azi>=-105): # while loop only wor
   ServoBlaster.write('P1-12=' + str(servo_x2) + 'us' + '\n') # pulse to pin 11
   ServoBlaster.flush()
   time.sleep(5)
-  ServoBlaster.write('P1-12=' + str(servo_x) + 'us' + '\n') # pulse to pin 11
+  ServoBlaster.write('P1-12=' + str(servo_x) + 'us' + '\n') # pulse to pin 12
   ServoBlaster.flush()
   time.sleep(5)
   print (servo_y2)
-  if (servo_y2-servo_y3)>=500:
+  if (servo_y2-servo_y3)>=700:
+    for i in range(0,7):
+      servo_y2=servo_y2-u
+      ServoBlaster.write('P1-11=' + str(servo_y2) + 'us' + '\n') # pulse to pin 11
+      ServoBlaster.flush()
+      time.sleep(0.5)
+  elif (servo_y2-servo_y3)>=600:
+    for i in range(0,6):
+      servo_y2=servo_y2-v
+      ServoBlaster.write('P1-11=' + str(servo_y2) + 'us' + '\n') # pulse to pin 11
+      ServoBlaster.flush()
+      time.sleep(0.5)
+  elif (servo_y2-servo_y3)>=500:
     for i in range(0,5):
       servo_y2=servo_y2-w
-      ServoBlaster.write('P1-11=' + str(servo_y2) + 'us' + '\n') # pulse to pin 12
+      ServoBlaster.write('P1-11=' + str(servo_y2) + 'us' + '\n') # pulse to pin 11
       ServoBlaster.flush()
       time.sleep(0.5)
   elif (servo_y2-servo_y3)>=400:
     for i in range(0,4):
       servo_y2=servo_y2-x
-      ServoBlaster.write('P1-11=' + str(servo_y2) + 'us' + '\n') # pulse to pin 12
+      ServoBlaster.write('P1-11=' + str(servo_y2) + 'us' + '\n') # pulse to pin 11
       ServoBlaster.flush()
       time.sleep(0.5)
   elif (servo_y2-servo_y3)>=300:
     for i in range(0,3):
       servo_y2=servo_y2-y
-      ServoBlaster.write('P1-11=' + str(servo_y2) + 'us' + '\n') # pulse to pin 12
+      ServoBlaster.write('P1-11=' + str(servo_y2) + 'us' + '\n') # pulse to pin 11
       ServoBlaster.flush()
       time.sleep(0.5)
   elif (servo_y2-servo_y3)>=200:

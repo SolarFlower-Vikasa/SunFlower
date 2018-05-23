@@ -169,13 +169,13 @@ while (time.time()<t_end):
 time.sleep(10) # Tell the motor to run for x amount of seconds
 
 # Last chance to acces the Pi before it turns off
-print ("You have 3 minutes to access the Pi!")
-i, o, e = select.select( [sys.stdin], [], [], 600 ) # 600 seconds = 10 min
-if (i):
-  print ("Have fun with the Pi!")
-  sys.exit() # Stops the code and exits
-else:
-  print ("Turning the Pi Off")
+#print ("You have 3 minutes to access the Pi!")
+#i, o, e = select.select( [sys.stdin], [], [], 600 ) # 600 seconds = 10 min
+#if (i):
+#  print ("Have fun with the Pi!")
+#  sys.exit() # Stops the code and exits
+#else:
+#  print ("Turning the Pi Off")
 # Code continues if there is no input
 
 # Code to turn off the pi
